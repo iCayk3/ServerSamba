@@ -1,0 +1,28 @@
+name: nas-backup
+
+services:
+  backup:
+    build:
+      context: /opt/infraestrutura-solprovedor/nas/backup
+      dockerfile: Dockerfile
+    container_name: nas-backup
+    restart: unless-stopped
+    cpus: 0.25
+    mem_limit: 2g
+    environment:
+      TZ: ${TZ}
+      RESTIC_REPOSITORY: ${RESTIC_REPOSITORY}
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+      BACKUP_CRON: ${BACKUP_CRON}
+    volumes:
+      - /srv/nas-data:/data:ro
+      - /var/lib/docker/volumes:/docker-volumes:ro
+      - /srv/nas-system/config:/config-backup:ro
+      - /srv/nas-system/rclone/rclone.conf:/root/.config/rclone/rclone.conf:ro
+      - /srv/nas-system/restic-cache:/root/.cache/restic
+    networks:
+      - nas_backend
+
+networks:
+  nas_backend:
+    external: true

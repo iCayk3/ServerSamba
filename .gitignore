@@ -1,0 +1,25 @@
+# Segredos
+.env
+.env.*
+!.env.example
+*.secret
+*.key
+*.pem
+secrets/
+**/rclone.conf
+
+# Dados persistentes: nunca versionar
+data/
+volumes/
+storage/
+backups/
+logs/
+*.db
+*.sqlite
+
+# Sistema/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
