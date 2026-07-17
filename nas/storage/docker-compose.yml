@@ -21,7 +21,7 @@ services:
       - MODEL=NAS
       - AVAHI_NAME=${SAMBA_SERVER_NAME}
       - SAMBA_CONF_WORKGROUP=${SAMBA_WORKGROUP}
-      - SAMBA_CONF_MAP_TO_GUEST=Bad User
+      - SAMBA_CONF_MAP_TO_GUEST=Never
       - FAIL_FAST=true
 
       # =====================================================
