@@ -13,75 +13,82 @@ services:
       - "139:139/tcp"
       - "445:445/tcp"
     environment:
-      TZ: ${TZ}
-      MODEL: NAS
-      AVAHI_NAME: ${SAMBA_SERVER_NAME}
-      SAMBA_CONF_WORKGROUP: ${SAMBA_WORKGROUP}
+  - TZ=${TZ}
+  - MODEL=NAS
+  - AVAHI_NAME=${SAMBA_SERVER_NAME}
+  - SAMBA_CONF_WORKGROUP=${SAMBA_WORKGROUP}
+  - FAIL_FAST=true
 
-      GROUP_financeiro_ro: "2001"
-      GROUP_financeiro_rw: "2002"
-      GROUP_rh_ro: "2011"
-      GROUP_rh_rw: "2012"
+  # Grupos
+  - GROUP_financeiro_ro=2001
+  - GROUP_financeiro_rw=2002
+  - GROUP_rh_ro=2011
+  - GROUP_rh_rw=2012
 
-      ACCOUNT_${SAMBA_USER1}: ${SAMBA_USER1_PASSWORD}
-      UID_${SAMBA_USER1}: "1001"
-      GROUPS_${SAMBA_USER1}: "financeiro_rw,rh_ro"
+  # Usuário 1
+  - ACCOUNT_${SAMBA_USER1}=${SAMBA_USER1_PASSWORD}
+  - UID_${SAMBA_USER1}=1001
+  - GROUPS_${SAMBA_USER1}=financeiro_rw,rh_ro
 
-      ACCOUNT_${SAMBA_USER2}: ${SAMBA_USER2_PASSWORD}
-      UID_${SAMBA_USER2}: "1002"
-      GROUPS_${SAMBA_USER2}: "financeiro_ro,rh_rw"
+  # Usuário 2
+  - ACCOUNT_${SAMBA_USER2}=${SAMBA_USER2_PASSWORD}
+  - UID_${SAMBA_USER2}=1002
+  - GROUPS_${SAMBA_USER2}=financeiro_ro,rh_rw
 
-      SAMBA_VOLUME_CONFIG_financeiro: >-
-        [Financeiro];
-        path=/shares/financeiro;
-        valid users = @financeiro_ro, @financeiro_rw;
-        read list = @financeiro_ro;
-        write list = @financeiro_rw;
-        guest ok = no;
-        browseable = yes;
-        read only = yes;
-        force create mode = 0660;
-        force directory mode = 0770;
-        vfs objects = full_audit;
-        full_audit:prefix = USER=%u|IP=%I|SHARE=%S;
-        full_audit:success = connect disconnect mkdirat renameat unlinkat pwrite;
-        full_audit:failure = all;
-        full_audit:facility = LOCAL5;
-        full_audit:priority = NOTICE
+  # Compartilhamento Financeiro
+  - >-
+    SAMBA_VOLUME_CONFIG_financeiro=[Financeiro];
+    path=/shares/financeiro;
+    valid users = @financeiro_ro, @financeiro_rw;
+    read list = @financeiro_ro;
+    write list = @financeiro_rw;
+    guest ok = no;
+    browseable = yes;
+    read only = yes;
+    force create mode = 0660;
+    force directory mode = 0770;
+    vfs objects = full_audit;
+    full_audit:prefix = USER=%u|IP=%I|SHARE=%S;
+    full_audit:success = connect disconnect mkdirat renameat unlinkat pwrite;
+    full_audit:failure = all;
+    full_audit:facility = LOCAL5;
+    full_audit:priority = NOTICE
 
-      SAMBA_VOLUME_CONFIG_rh: >-
-        [RH];
-        path=/shares/rh;
-        valid users = @rh_ro, @rh_rw;
-        read list = @rh_ro;
-        write list = @rh_rw;
-        guest ok = no;
-        browseable = yes;
-        read only = yes;
-        force create mode = 0660;
-        force directory mode = 0770;
-        vfs objects = full_audit;
-        full_audit:prefix = USER=%u|IP=%I|SHARE=%S;
-        full_audit:success = connect disconnect mkdirat renameat unlinkat pwrite;
-        full_audit:failure = all;
-        full_audit:facility = LOCAL5;
-        full_audit:priority = NOTICE
+  # Compartilhamento RH
+  - >-
+    SAMBA_VOLUME_CONFIG_rh=[RH];
+    path=/shares/rh;
+    valid users = @rh_ro, @rh_rw;
+    read list = @rh_ro;
+    write list = @rh_rw;
+    guest ok = no;
+    browseable = yes;
+    read only = yes;
+    force create mode = 0660;
+    force directory mode = 0770;
+    vfs objects = full_audit;
+    full_audit:prefix = USER=%u|IP=%I|SHARE=%S;
+    full_audit:success = connect disconnect mkdirat renameat unlinkat pwrite;
+    full_audit:failure = all;
+    full_audit:facility = LOCAL5;
+    full_audit:priority = NOTICE
 
-      SAMBA_VOLUME_CONFIG_publico: >-
-        [Publico];
-        path=/shares/publico;
-        valid users = ${SAMBA_USER1}, ${SAMBA_USER2};
-        guest ok = no;
-        browseable = yes;
-        read only = no;
-        force create mode = 0660;
-        force directory mode = 0770;
-        vfs objects = full_audit;
-        full_audit:prefix = USER=%u|IP=%I|SHARE=%S;
-        full_audit:success = connect disconnect mkdirat renameat unlinkat pwrite;
-        full_audit:failure = all;
-        full_audit:facility = LOCAL5;
-        full_audit:priority = NOTICE
+  # Compartilhamento Público
+  - >-
+    SAMBA_VOLUME_CONFIG_publico=[Publico];
+    path=/shares/publico;
+    valid users = ${SAMBA_USER1}, ${SAMBA_USER2};
+    guest ok = no;
+    browseable = yes;
+    read only = no;
+    force create mode = 0660;
+    force directory mode = 0770;
+    vfs objects = full_audit;
+    full_audit:prefix = USER=%u|IP=%I|SHARE=%S;
+    full_audit:success = connect disconnect mkdirat renameat unlinkat pwrite;
+    full_audit:failure = all;
+    full_audit:facility = LOCAL5;
+    full_audit:priority = NOTICE
     volumes:
       - /srv/nas-data/financeiro:/shares/financeiro
       - /srv/nas-data/rh:/shares/rh
